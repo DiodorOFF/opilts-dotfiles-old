@@ -9,6 +9,20 @@
   - 8GB internal eMMC
 - **Cooling**: GPIO-controlled fan with PWM (preferred) or ON/OFF functionality
 
+## Network Configuration
+- **DNS Servers** (provided by ISP): 7.7.7.7, 3.3.3.3
+- **External IP**: 171.25.168.191 (static)
+- **Timezone**: Ukraine/Kyiv
+- **Network Interfaces**:
+  - Ethernet (primary): 192.168.88.8
+  - WiFi (secondary): 192.168.88.9
+- **Network Subnet**: 192.168.88.0/24
+- **Port Allocation**:
+  - Ports 80 and 443 will be primarily used by Caddy reverse proxy
+  - Minecraft: Default ports
+  - Gitea: Default ports
+  - Monitoring services: Default ports
+
 ## Deployment Approach
 This project uses a hybrid deployment approach:
 
@@ -38,6 +52,8 @@ This project uses a hybrid deployment approach:
   - Domain: pihole.memedition.com
   - IP: 192.168.88.8
   - Latest Docker image
+  - Using ISP DNS (7.7.7.7, 3.3.3.3) as upstream
+  - Handling local DNS management
 - [ ] **Unbound**
   - DNS resolver for Pi-hole
   - DNSSEC validation enabled
@@ -45,16 +61,20 @@ This project uses a hybrid deployment approach:
   - Reverse proxy for internal services
   - Automatic HTTPS
   - External access configuration
+  - Primary user of ports 80 and 443
+  - No DDNS needed (static external IP)
 
 ### 3. Application Services (Docker containers)
 - [ ] **Minecraft Server**
   - Vanilla with Fabric implementation
   - IP: 192.168.88.8
   - Optimized for 2GB RAM environment
+  - **Migration required** (existing service)
 - [ ] **Git + Gitea**
   - Domain: git.memedition.com
   - IP: 192.168.88.8
   - Configured for 2-3 users maximum
+  - **Migration required** (existing service)
 
 ### 4. System Management
 - [x] **Etckeeper** (system-based)
@@ -68,13 +88,17 @@ This project uses a hybrid deployment approach:
 - [x] **Docker and Docker Compose** (system-based)
   - Container orchestration
   - Latest stable versions
+  - Container volumes stored on eMMC
+  - Updates performed manually
 - [ ] **Cooling system management** (system-based)
   - PWM fan control via GPIO
   - Temperature-based speed regulation
+  - Thresholds: 0-40°C (0% PWM), 40°C (30% PWM), 60°C (100% PWM)
 - [ ] **Backup solution**
   - Configuration files
   - Critical data
   - ~~SD card encryption~~ (DISCARDED: Not suitable for headless server)
+  - Detailed backup strategy to be determined later
 
 ### 5. Monitoring (Docker containers)
 - [ ] **Prometheus**
@@ -101,16 +125,22 @@ This project uses a hybrid deployment approach:
 
 ### 2. Network Infrastructure
 - [ ] Deploy Pi-hole container
+  - Configure to use ISP DNS (7.7.7.7, 3.3.3.3)
+  - Set timezone to Ukraine/Kyiv
 - [ ] Configure Unbound container for secure DNS
 - [ ] Deploy Caddy container
+  - Configure to use ports 80 and 443
+  - Set up for external IP 171.25.168.191
 - [ ] Set up reverse proxy configurations
 - [ ] Configure domain routing and DNS settings
 - [ ] Test DNS resolution and web server functionality
 
 ### 3. Service Deployment
 - [ ] Deploy Gitea container
+  - Migrate existing Gitea instance and repositories
 - [ ] Configure Git repositories
 - [ ] Deploy Minecraft server container with Fabric
+  - Migrate existing Minecraft server data and configuration
 - [ ] Optimize Minecraft for available resources
 - [ ] Test all services for proper functionality
 
@@ -158,3 +188,4 @@ Given the 2GB RAM constraint:
 - Monitor temperature closely during initial deployment
 - Test external access security thoroughly
 - Scale services according to actual resource usage
+- Configure all services to use Ukraine/Kyiv timezone where applicable
