@@ -7,7 +7,7 @@ networks:
 services:
   unbound:
     container_name: unbound
-    image: mvance/unbound:latest
+    image: mvance/unbound-rpi:latest
     networks:
       dns_network:
         ipv4_address: 172.20.0.2
@@ -40,7 +40,7 @@ services:
       - "8080:80/tcp"
     environment:
       TZ: 'Europe/Kiev'
-      WEBPASSWORD: 'correct horse battery staple'  # Change this to a secure password
+      WEBPASSWORD: 'mypassword'  # Change this to a secure password
       ServerIP: '192.168.88.8'
       DNS1: '172.20.0.2'
       DNS2: 'no'
