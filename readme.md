@@ -10,7 +10,7 @@
 - **Cooling**: GPIO-controlled fan with PWM (preferred) or ON/OFF functionality
 
 ## Network Configuration
-- **DNS Servers** (provided by ISP): 7.7.7.7, 3.3.3.3
+- **DNS Servers**: Pi-hole + Unbound (completed)
 - **External IP**: 171.25.168.191 (static)
 - **Timezone**: Ukraine/Kyiv
 - **Network Interfaces**:
@@ -34,7 +34,7 @@ This project uses a hybrid deployment approach:
   - [x] Dotfiles repository
 
 - **Docker-based deployment** for application services:
-  - [ ] Pi-hole + Unbound
+  - [x] Pi-hole + Unbound
   - [ ] Caddy
   - [ ] Gitea
   - [ ] Minecraft server
@@ -48,15 +48,14 @@ This project uses a hybrid deployment approach:
 - [x] Configured for network server operation
 
 ### 2. Network Services (Docker containers)
-- [ ] **Pi-hole with HTTPS DNS** 
+- [x] **Pi-hole with DNS** 
   - Domain: pihole.memedition.com
   - IP: 192.168.88.8
   - Latest Docker image
-  - Using ISP DNS (7.7.7.7, 3.3.3.3) as upstream
-  - Handling local DNS management
-- [ ] **Unbound**
-  - DNS resolver for Pi-hole
+  - Using Unbound for recursive DNS resolution
+  - Local DNS management and ad-blocking
   - DNSSEC validation enabled
+  - Optimized for 2GB RAM environment
 - [ ] **Caddy server**
   - Reverse proxy for internal services
   - Automatic HTTPS
@@ -85,6 +84,7 @@ This project uses a hybrid deployment approach:
   - Bare git repository method
   - GitHub repository: git@github.com:DiodorOFF/opilts-dotfiles.git
   - SSH key configured for authentication
+  - Symlinked to application directories
 - [x] **Docker and Docker Compose** (system-based)
   - Container orchestration
   - Latest stable versions
@@ -124,23 +124,24 @@ This project uses a hybrid deployment approach:
 - [x] Configure SSH keys for GitHub access
 
 ### 2. Network Infrastructure
-- [ ] Deploy Pi-hole container
-  - Configure to use ISP DNS (7.7.7.7, 3.3.3.3)
-  - Set timezone to Ukraine/Kyiv
-- [ ] Configure Unbound container for secure DNS
+- [x] Deploy Pi-hole container with Unbound
+  - [x] Configure DNSSEC validation
+  - [x] Set timezone to Ukraine/Kyiv
+  - [x] Optimize for low memory usage
+  - [x] Configure to start on system boot
 - [ ] Deploy Caddy container
-  - Configure to use ports 80 and 443
-  - Set up for external IP 171.25.168.191
+  - [ ] Configure to use ports 80 and 443
+  - [ ] Set up for external IP 171.25.168.191
 - [ ] Set up reverse proxy configurations
 - [ ] Configure domain routing and DNS settings
 - [ ] Test DNS resolution and web server functionality
 
 ### 3. Service Deployment
 - [ ] Deploy Gitea container
-  - Migrate existing Gitea instance and repositories
+  - [ ] Migrate existing Gitea instance and repositories
 - [ ] Configure Git repositories
 - [ ] Deploy Minecraft server container with Fabric
-  - Migrate existing Minecraft server data and configuration
+  - [ ] Migrate existing Minecraft server data and configuration
 - [ ] Optimize Minecraft for available resources
 - [ ] Test all services for proper functionality
 
@@ -177,15 +178,23 @@ This project uses a hybrid deployment approach:
 Given the 2GB RAM constraint:
 - Reserve 256MB for base system
 - Allocate 512MB for Minecraft (adjustable based on player count)
-- Allocate 384MB for Pi-hole + Unbound
+- Allocate 384MB for Pi-hole + Unbound (128MB Unbound, 256MB Pi-hole)
 - Allocate 256MB for Gitea
 - Allocate 256MB for Caddy
 - Allocate 256MB for Prometheus + Grafana
 - Leave 80MB as buffer
 
-## Additional Notes
-- Consider log rotation for all services to prevent storage issues
-- Monitor temperature closely during initial deployment
-- Test external access security thoroughly
-- Scale services according to actual resource usage
-- Configure all services to use Ukraine/Kyiv timezone where applicable
+## DNS Server Implementation (Completed)
+- **Pi-hole** + **Unbound** deployed as Docker containers
+- Configured for optimal performance on Orange Pi 3 LTS
+- DNSSEC validation enabled
+- Ad-blocking and privacy protection active
+- Local DNS records configured for internal services
+- Symbolic links set up between `/opt/dns-server` and dotfiles repository
+- Systemd service created for automatic startup
+- Pi-hole admin interface accessible at http://192.168.88.8:8080/admin
+
+## Next Steps
+- Deploy Caddy reverse proxy for secure access to internal services
+- Set up HTTPS for Pi-hole admin interface through Caddy
+- Configure Gitea and Minecraft server containers
