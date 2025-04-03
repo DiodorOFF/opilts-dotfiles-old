@@ -1,0 +1,70 @@
+version: '3'
+
+networks:
+  dns_network:
+    driver: bridge
+
+services:
+  unbound:
+    container_name: unbound
+    image: mvance/unbound:latest
+    networks:
+      dns_network:
+        ipv4_address: 172.20.0.2
+    volumes:
+      - ./unbound/conf:/opt/unbound/etc/unbound/custom
+      - ./unbound/a-records.conf:/opt/unbound/etc/unbound/a-records.conf
+      - ./unbound/forward-records.conf:/opt/unbound/etc/unbound/forward-records.conf
+    restart: unless-stopped
+    environment:
+      - TZ=Europe/Kiev
+    healthcheck:
+      test: ["CMD", "dig", "@127.0.0.1", "-p", "53", "google.com"]
+      interval: 30s
+      timeout: 15s
+      retries: 3
+    mem_limit: 128M
+    mem_reservation: 96M
+
+  pihole:
+    container_name: pihole
+    image: pihole/pihole:latest
+    depends_on:
+      - unbound
+    networks:
+      dns_network:
+        ipv4_address: 172.20.0.3
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+      - "8080:80/tcp"
+    environment:
+      TZ: 'Europe/Kiev'
+      WEBPASSWORD: 'correct horse battery staple'  # Change this to a secure password
+      ServerIP: '192.168.88.8'
+      DNS1: '172.20.0.2'
+      DNS2: 'no'
+      DNSSEC: 'true'
+      REV_SERVER: 'true'
+      REV_SERVER_CIDR: '192.168.88.0/24'
+      REV_SERVER_TARGET: '192.168.88.1'
+      REV_SERVER_DOMAIN: 'lan'
+      FTLCONF_dns_listeningMode: 'all'
+      VIRTUAL_HOST: 'pihole.memedition.com'
+    volumes:
+      - './pihole/etc-pihole:/etc/pihole'
+      - './pihole/etc-dnsmasq.d:/etc/dnsmasq.d'
+    cap_add:
+      - NET_ADMIN
+    restart: unless-stopped
+    dns:
+      - 127.0.0.1
+      - 1.1.1.1  # Fallback during container start
+    mem_limit: 256M
+    mem_reservation: 128M
+
+networks:
+  dns_network:
+    ipam:
+      config:
+        - subnet: 172.20.0.0/24
