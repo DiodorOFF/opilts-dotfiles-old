@@ -10,7 +10,7 @@
 - **Cooling**: GPIO-controlled fan with ON/OFF functionality (currently) with future PWM upgrade path
 
 ## Network Configuration
-- **DNS Servers**: Pi-hole + Unbound (completed)
+- **DNS Servers**: Pi-hole + Unbound (completed and functioning)
 - **External IP**: 171.25.168.191 (static)
 - **Timezone**: Ukraine/Kyiv
 - **Network Interfaces**:
@@ -52,10 +52,11 @@ This project uses a hybrid deployment approach:
   - Domain: pihole.memedition.com
   - IP: 192.168.88.8
   - Latest Docker image
-  - Using Unbound for recursive DNS resolution
+  - Using Unbound for recursive DNS resolution (mvance/unbound-rpi image for ARM compatibility)
   - Local DNS management and ad-blocking
   - DNSSEC validation enabled
   - Optimized for 2GB RAM environment
+  - ISSUE RESOLVED: Architecture compatibility with ARM processor, working configuration
 - [ ] **Caddy server**
   - Reverse proxy for internal services
   - Automatic HTTPS
@@ -136,6 +137,8 @@ This project uses a hybrid deployment approach:
   - [x] Set timezone to Ukraine/Kyiv
   - [x] Optimize for low memory usage
   - [x] Configure to start on system boot
+  - [x] Resolve ARM architecture compatibility issues
+  - [x] Successfully test DNS resolution
 - [ ] Deploy Caddy container
   - [ ] Configure to use ports 80 and 443
   - [ ] Set up for external IP 171.25.168.191
@@ -197,7 +200,16 @@ Given the 2GB RAM constraint:
 - DNSSEC validation enabled
 - Ad-blocking and privacy protection active
 - Local DNS records configured for internal services
-- Symbolic links set up between `/opt/dns-server` and dotfiles repository
+- Using ARM-compatible Docker image (mvance/unbound-rpi) for Unbound
+- Pi-hole successfully resolving DNS queries via Unbound
+- Verified working configuration with:
+  ```bash
+  # Host DNS resolution
+  dig @127.0.0.1 google.com  # Returns proper IP
+  
+  # Pi-hole to Unbound resolution
+  sudo docker exec pihole dig @172.20.0.2 google.com  # Returns proper IP
+  ```
 - Systemd service created for automatic startup
 - Pi-hole admin interface accessible at http://192.168.88.8:8080/admin
 
@@ -217,6 +229,12 @@ Given the 2GB RAM constraint:
     * 0-40°C: 0% PWM (fan off)
     * 40-60°C: 30-100% PWM (linear scaling)
     * >60°C: 100% PWM (fan at full speed)
+
+## Troubleshooting Lessons
+- Docker images must be ARM-compatible (arm32v7 or arm64v8) for the Orange Pi
+- Configuration paths and volume mounts must match exactly
+- Always test DNS resolution directly after configuration changes
+- Start with minimal configuration and add complexity gradually
 
 ## Next Steps
 - Deploy Caddy reverse proxy for secure access to internal services
