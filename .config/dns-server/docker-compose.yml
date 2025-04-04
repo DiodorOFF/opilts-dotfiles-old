@@ -13,6 +13,7 @@ services:
         ipv4_address: 172.20.0.2
     volumes:
       - ./unbound/conf/custom.conf:/opt/unbound/etc/unbound/unbound.conf.d/custom.conf
+      - ./unbound/a-records.conf:/opt/unbound/etc/unbound/a-records.conf
     restart: unless-stopped
     environment:
       - TZ=Europe/Kiev
