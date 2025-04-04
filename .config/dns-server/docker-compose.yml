@@ -57,7 +57,7 @@ services:
       - NET_ADMIN
     restart: unless-stopped
     dns:
-      - 127.0.0.1
+      - 172.20.0.2  # Unbound DNS server
       - 1.1.1.1  # Fallback during container start
     mem_limit: 256M
     mem_reservation: 128M
