@@ -1,0 +1,12 @@
+[Unit]
+Description=CPU Temperature Controlled Fan
+After=multi-user.target
+
+[Service]
+Type=simple
+ExecStart=/opt/fan-control/fan_control.sh
+Restart=always
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target
