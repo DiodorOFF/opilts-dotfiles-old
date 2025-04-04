@@ -7,7 +7,7 @@ networks:
 services:
   unbound:
     container_name: unbound
-    image: mvance/unbound-rpi:latest
+    image: klutchell/unbound:latest
     networks:
       dns_network:
         ipv4_address: 172.20.0.2
