@@ -7,7 +7,7 @@
 - **Storage**: 
   - 64GB SD card
   - 8GB internal eMMC
-- **Cooling**: GPIO-controlled fan with PWM (preferred) or ON/OFF functionality
+- **Cooling**: GPIO-controlled fan with ON/OFF functionality (currently) with future PWM upgrade path
 
 ## Network Configuration
 - **DNS Servers**: Pi-hole + Unbound (completed)
@@ -28,7 +28,7 @@ This project uses a hybrid deployment approach:
 
 - **System-based installation** for core services:
   - [x] Base OS (Armbian)
-  - [ ] Fan control system
+  - [x] Fan control system
   - [x] Etckeeper
   - [x] Docker and Docker Compose
   - [x] Dotfiles repository
@@ -84,16 +84,23 @@ This project uses a hybrid deployment approach:
   - Bare git repository method
   - GitHub repository: git@github.com:DiodorOFF/opilts-dotfiles.git
   - SSH key configured for authentication
-  - Symlinked to application directories
+  - Symbolic links used to connect repository files to system locations
+  - Fan control configuration stored in ~/.config/fan-control/
 - [x] **Docker and Docker Compose** (system-based)
   - Container orchestration
   - Latest stable versions
   - Container volumes stored on eMMC
   - Updates performed manually
-- [ ] **Cooling system management** (system-based)
-  - PWM fan control via GPIO
-  - Temperature-based speed regulation
-  - Thresholds: 0-40°C (0% PWM), 40°C (30% PWM), 60°C (100% PWM)
+- [x] **Cooling system management** (system-based)
+  - ON/OFF fan control via GPIO (BC368 transistor)
+  - Temperature-based control: ON at ≥50°C, OFF at <50°C
+  - wiringOP library for GPIO access
+  - Implementation: 
+    - Script at /opt/fan-control/fan_control.sh
+    - Symbolic link from ~/.config/fan-control/fan_control.sh
+    - Service at /etc/systemd/system/fan-control.service
+    - Symbolic link from ~/.config/fan-control/fan-control.service
+  - Future upgrade path to PWM control with MOSFET
 - [ ] **Backup solution**
   - Configuration files
   - Critical data
@@ -118,7 +125,7 @@ This project uses a hybrid deployment approach:
 - [x] Network setup and security hardening
 - [x] Configure eMMC for appropriate storage usage (using ext4)
 - [x] Install and configure Docker and Docker Compose
-- [ ] Set up GPIO fan control with PWM functionality
+- [x] Set up GPIO fan control with ON/OFF functionality
 - [x] Implement Etckeeper for tracking system changes
 - [x] Set up dotfiles repository with bare git method
 - [x] Configure SSH keys for GitHub access
@@ -193,6 +200,23 @@ Given the 2GB RAM constraint:
 - Symbolic links set up between `/opt/dns-server` and dotfiles repository
 - Systemd service created for automatic startup
 - Pi-hole admin interface accessible at http://192.168.88.8:8080/admin
+
+## Fan Control Implementation (Completed)
+- Temperature-controlled fan system implemented
+- Using wiringOP for GPIO control
+- Current configuration:
+  - ON/OFF control (BC368 transistor)
+  - ON when temperature ≥ 50°C
+  - OFF when temperature < 50°C
+- Script location: /opt/fan-control/fan_control.sh (symlinked from dotfiles)
+- Service: /etc/systemd/system/fan-control.service (symlinked from dotfiles)
+- Dotfiles storage: ~/.config/fan-control/
+- Future upgrade path:
+  - PWM control with MOSFET transistor
+  - Variable speed control based on temperature:
+    * 0-40°C: 0% PWM (fan off)
+    * 40-60°C: 30-100% PWM (linear scaling)
+    * >60°C: 100% PWM (fan at full speed)
 
 ## Next Steps
 - Deploy Caddy reverse proxy for secure access to internal services
