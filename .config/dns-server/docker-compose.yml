@@ -7,12 +7,12 @@ networks:
 services:
   unbound:
     container_name: unbound
-    image: klutchell/unbound:latest
+    image: mvance/unbound-rpi:latest
     networks:
       dns_network:
         ipv4_address: 172.20.0.2
     volumes:
-      - ./unbound/conf:/opt/unbound/etc/unbound/custom
+      - ./unbound/conf/custom.conf:/opt/unbound/etc/unbound/unbound.conf.d/custom.conf
       - ./unbound/a-records.conf:/opt/unbound/etc/unbound/a-records.conf
       - ./unbound/forward-records.conf:/opt/unbound/etc/unbound/forward-records.conf
     restart: unless-stopped
