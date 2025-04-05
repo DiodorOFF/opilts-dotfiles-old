@@ -1,0 +1,16 @@
+# Global options
+{
+    # Email for ACME (Let's Encrypt) notifications
+    # email your-email@example.com
+    
+    # Use auto_https off for testing on internal networks
+    auto_https off
+}
+
+# Import site configurations
+import /etc/caddy/sites/*.caddy
+
+# Default site 
+:80 {
+    respond "Caddy server is running. Please configure your sites."
+}

@@ -62,6 +62,26 @@ services:
     mem_limit: 256M
     mem_reservation: 128M
 
+  caddy:
+    container_name: caddy
+    image: caddy:2-alpine
+    networks:
+      dns_network:
+        ipv4_address: 172.20.0.4
+    ports:
+      - "80:80/tcp"
+      - "443:443/tcp"
+      - "8081:8081/tcp"  # Added this line to expose port 8081
+    volumes:
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./caddy/sites:/etc/caddy/sites:ro
+      - ./caddy/data:/data
+    environment:
+      - TZ=Europe/Kiev
+    restart: unless-stopped
+    mem_limit: 256M
+    mem_reservation: 128M
+
 networks:
   dns_network:
     ipam:
