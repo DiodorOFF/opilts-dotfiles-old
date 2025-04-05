@@ -11,13 +11,14 @@
 #	tls /etc/caddy/certs/cert.pem /etc/caddy/certs/key.pem
 #}
 
-# Configuration for pi-hole
+# Pi-hole configuration
 pihole.memedition.com {
     reverse_proxy 172.20.0.3:80 {
         transport http {
             tls_insecure_skip_verify
         }
     }
+    tls /etc/caddy/certs/cert.pem /etc/caddy/certs/key.pem
 }
 
 # Import site configurations
