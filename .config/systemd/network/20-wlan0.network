@@ -1,0 +1,10 @@
+[Match]
+Name=wlan0
+
+[Network]
+DHCP=yes
+DNS=127.0.0.1
+Domains=~.
+
+[DHCP]
+UseDNS=no
