@@ -1,16 +1,23 @@
 # Global options
 {
     # Email for ACME (Let's Encrypt) notifications
+    # Uncomment and update when ready for production
     # email your-email@example.com
     
-    # Use auto_https off for testing on internal networks
+    # Use auto_https off for initial internal testing
     auto_https off
+    
+    # Log level (debug, info, warn, error, fatal, panic)
+    log {
+        level INFO
+    }
 }
 
 # Import site configurations
 import /etc/caddy/sites/*.caddy
 
-# Default site 
+# Default catch-all site
 :80 {
-    respond "Caddy server is running. Please configure your sites."
+    # Simple response for default site
+    respond "Caddy reverse proxy is running - 192.168.88.8" 200
 }

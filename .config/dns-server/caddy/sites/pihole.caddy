@@ -1,6 +1,8 @@
 # Pi-hole admin interface
 pihole.memedition.com:80 {
+    # Basic reverse proxy configuration
     reverse_proxy pihole:80 {
+        # Standard proxy headers
         header_up Host {host}
         header_up X-Real-IP {remote_host}
         header_up X-Forwarded-For {remote_host}
