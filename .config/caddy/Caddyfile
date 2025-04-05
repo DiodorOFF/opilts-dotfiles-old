@@ -6,9 +6,18 @@
 	}
 }
 
+#pihole.memedition.com {
+#	reverse_proxy 172.20.0.3:80
+#	tls /etc/caddy/certs/cert.pem /etc/caddy/certs/key.pem
+#}
+
+# Configuration for pi-hole
 pihole.memedition.com {
-	reverse_proxy 172.20.0.3:80
-	tls /etc/caddy/certs/cert.pem /etc/caddy/certs/key.pem
+    reverse_proxy 172.20.0.3:80 {
+        transport http {
+            tls_insecure_skip_verify
+        }
+    }
 }
 
 # Import site configurations
