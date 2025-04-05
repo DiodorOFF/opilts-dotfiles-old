@@ -1,0 +1,10 @@
+{
+	# Global settings
+	admin off
+	log {
+		format json
+	}
+}
+
+# Import site configurations
+import /etc/caddy/sites/*.caddy

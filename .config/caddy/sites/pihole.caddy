@@ -1,0 +1,4 @@
+pihole.memedition.com {
+	reverse_proxy 172.20.0.3:80
+	tls /etc/caddy/certs/cert.pem /etc/caddy/certs/key.pem
+}

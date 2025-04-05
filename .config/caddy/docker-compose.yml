@@ -1,0 +1,28 @@
+version: '3'
+
+services:
+  caddy:
+    container_name: caddy
+    image: caddy:2
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - ./sites:/etc/caddy/sites
+      - ./data:/data
+      - ./config:/config
+      - ./certs:/etc/caddy/certs
+    restart: unless-stopped
+    networks:
+      - caddy_network
+      - dns_network
+    mem_limit: 256M
+    mem_reservation: 128M
+
+networks:
+  caddy_network:
+    driver: bridge
+  dns_network:
+    external: true
+    name: dns-server_dns_network
