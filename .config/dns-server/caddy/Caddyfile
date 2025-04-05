@@ -1,23 +1,44 @@
-# Global options
-{
-    # Email for ACME (Let's Encrypt) notifications
-    # Uncomment and update when ready for production
-    # email your-email@example.com
-    
-    # Use auto_https off for initial internal testing
-    auto_https off
-    
-    # Log level (debug, info, warn, error, fatal, panic)
+{   
+    # Log settings
     log {
         level INFO
     }
 }
 
-# Import site configurations
-import /etc/caddy/sites/*.caddy
+pihole.memedition.com {
+    # Rewrite the root path to /admin/
+    @root {
+        path /
+        path_regexp ^/?$
+    }
+    rewrite @root /admin/
+    
+    # Proxy all requests to Pi-hole
+    reverse_proxy 172.20.0.3:80
+}
 
-# Default catch-all site
+# Configuration for HomeAssistant
+ha.memedition.com {
+    reverse_proxy 192.168.88.10:8123
+    tls {
+	protocols tls1.2 tls1.3
+    }
+}
+
+# Configuration for Pc Power Control
+pc.memedition.com {
+    basicauth / {
+        stable $2a$14$9SXvOQ2r8A0HeFyMz7BJCe49RiZfxCKgm8phqwjed9pTJ1SR.Bo2O
+    }
+    reverse_proxy 192.168.88.211
+}
+
+# Configuration for Stable Diffusion
+https://stable.memedition.com {
+    reverse_proxy 192.168.88.81:7860
+}
+
+# Default site for direct IP access
 :80 {
-    # Simple response for default site
     respond "Caddy reverse proxy is running - 192.168.88.8" 200
 }

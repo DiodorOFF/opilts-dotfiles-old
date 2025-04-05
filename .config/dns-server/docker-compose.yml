@@ -36,7 +36,9 @@ services:
     ports:
       - "53:53/tcp"
       - "53:53/udp"
-      - "8080:80/tcp"
+      # Direct access to Pi-hole admin (optional)
+      # - "8080:80/tcp"
+      # - "8443:443/tcp"
     environment:
       TZ: 'Europe/Kiev'
       WEBPASSWORD: 'mypassword'  # Change this to a secure password
@@ -58,7 +60,7 @@ services:
     restart: unless-stopped
     dns:
       - 172.20.0.2  # Unbound DNS server
-      - 1.1.1.1  # Fallback during container start
+      - 1.1.1.1     # Fallback during container start
     mem_limit: 256M
     mem_reservation: 128M
 
@@ -71,13 +73,14 @@ services:
     ports:
       - "80:80/tcp"
       - "443:443/tcp"
-      - "8081:8081/tcp"  # Added this line to expose port 8081
     volumes:
       - /home/opilts/.config/dns-server/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
-      - /home/opilts/.config/dns-server/caddy/sites:/etc/caddy/sites:ro
-      - /opt/dns-server/caddy/data:/data
+      - /opt/dns-server/caddy/data:/data  # For certificates & TLS data
     environment:
       - TZ=Europe/Kiev
+    # Use your Unbound server for DNS
+    dns:
+      - 172.20.0.2  # Unbound DNS server
     restart: unless-stopped
     mem_limit: 256M
     mem_reservation: 128M
