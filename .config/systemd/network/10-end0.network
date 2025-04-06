@@ -8,3 +8,4 @@ Domains=~.
 
 [DHCP]
 UseDNS=no
+RouteMetric=100
