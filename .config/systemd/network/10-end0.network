@@ -3,6 +3,9 @@ Name=end0
 
 [Network]
 DHCP=yes
+# Add IPv6 configuration
+IPv6AcceptRA=no
+Address=fd88:abcd::53/64
 DNS=127.0.0.1
 Domains=~.
 
