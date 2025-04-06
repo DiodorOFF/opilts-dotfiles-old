@@ -37,7 +37,6 @@ services:
     networks:
       dns_network:
         ipv4_address: 172.20.0.3
-        ipv6_address: fd88:abcd::53
     ports:
       - "53:53/tcp"
       - "53:53/udp"
