@@ -18,7 +18,7 @@ services:
     environment:
       - TZ=Europe/Kiev
     healthcheck:
-      test: ["CMD", "dig", "@127.0.0.1", "-p", "53", "google.com"]
+      test: ["CMD", "/usr/bin/test", "-e", "/opt/unbound/sbin/unbound"]
       interval: 30s
       timeout: 15s
       retries: 3
