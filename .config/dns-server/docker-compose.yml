@@ -3,6 +3,11 @@ version: '3'
 networks:
   dns_network:
     driver: bridge
+    enable_ipv6: true
+    ipam:
+      config:
+        - subnet: 172.20.0.0/24
+        - subnet: fd00::/64
 
 services:
   unbound:
@@ -52,9 +57,13 @@ services:
       REV_SERVER_DOMAIN: 'lan'
       FTLCONF_dns_listeningMode: 'all'
       VIRTUAL_HOST: 'pihole.memedition.com'
+      ServerIPv6: 'fd88:abcd::53'
+      IPv6: 'true'
     volumes:
       - './pihole/etc-pihole:/etc/pihole'
       - './pihole/etc-dnsmasq.d:/etc/dnsmasq.d'
+    sysctls:
+      - net.ipv6.conf.all.disable_ipv6=0
     cap_add:
       - NET_ADMIN
     restart: unless-stopped
